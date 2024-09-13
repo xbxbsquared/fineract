@@ -176,6 +176,12 @@ public interface LoanApiConstants {
 
     // Data Validator names
     String LOAN_FRAUD_DATAVALIDATOR_PREFIX = "loans.fraud";
+    String GOODS_VALUE = "goodsValue";
+    String FREIGHT_CHARGES = "freightCharges";
+    String OTHER_CHARGES = "otherCharges";
+    String ADVANCE = "advance";
+    String REDUCTION_BY_LENDER = "reductionByLender";
+    String ADVANCE_RATIO = "advanceRatio";
 
     // Loan Summary Transaction Types
     List<Integer> LOAN_SUMMARY_TRANSACTION_TYPES = List.of(LoanTransactionType.CHARGE_ADJUSTMENT.getValue(), //

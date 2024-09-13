@@ -68,20 +68,7 @@ import org.apache.fineract.portfolio.group.domain.Group;
 import org.apache.fineract.portfolio.group.domain.GroupRepositoryWrapper;
 import org.apache.fineract.portfolio.loanaccount.api.LoanApiConstants;
 import org.apache.fineract.portfolio.loanaccount.data.LoanChargeData;
-import org.apache.fineract.portfolio.loanaccount.domain.GLIMAccountInfoRepository;
-import org.apache.fineract.portfolio.loanaccount.domain.GroupLoanIndividualMonitoringAccount;
-import org.apache.fineract.portfolio.loanaccount.domain.Loan;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanCharge;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanCollateralManagement;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanCreditAllocationRule;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanDisbursementDetails;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanLifecycleStateMachine;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanPaymentAllocationRule;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanRepaymentScheduleTransactionProcessorFactory;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanRepositoryWrapper;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanStatus;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanSummaryWrapper;
-import org.apache.fineract.portfolio.loanaccount.domain.LoanTopupDetails;
+import org.apache.fineract.portfolio.loanaccount.domain.*;
 import org.apache.fineract.portfolio.loanaccount.domain.transactionprocessor.LoanRepaymentScheduleTransactionProcessor;
 import org.apache.fineract.portfolio.loanaccount.domain.transactionprocessor.impl.AdvancedPaymentScheduleTransactionProcessor;
 import org.apache.fineract.portfolio.loanaccount.exception.ExceedingTrancheCountException;
@@ -162,6 +149,20 @@ public class LoanAssembler {
         final Boolean syncDisbursementWithMeeting = this.fromApiJsonHelper.extractBooleanNamed("syncDisbursementWithMeeting", element);
         final Boolean createStandingInstructionAtDisbursement = this.fromApiJsonHelper
                 .extractBooleanNamed("createStandingInstructionAtDisbursement", element);
+        final Locale locale = this.fromApiJsonHelper.extractLocaleParameter(element.getAsJsonObject());
+
+        BigDecimal goodsValue = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.GOODS_VALUE,
+                element, locale);
+        BigDecimal freightCharges = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.FREIGHT_CHARGES,
+                element, locale);
+        BigDecimal otherCharges = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.OTHER_CHARGES,
+                element, locale);
+        BigDecimal advance = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.ADVANCE,
+                element, locale);
+        BigDecimal reductionByLender = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.REDUCTION_BY_LENDER,
+                element, locale);
+        BigDecimal advanceRatio = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.ADVANCE_RATIO,
+                element, locale);
 
         final LoanProduct loanProduct = this.loanProductRepository.findById(productId)
                 .orElseThrow(() -> new LoanProductNotFoundException(productId));
@@ -185,7 +186,7 @@ public class LoanAssembler {
         }
         BigDecimal maxOutstandingLoanBalance = null;
         if (loanProduct.isMultiDisburseLoan()) {
-            final Locale locale = this.fromApiJsonHelper.extractLocaleParameter(element.getAsJsonObject());
+           // final Locale locale = this.fromApiJsonHelper.extractLocaleParameter(element.getAsJsonObject());
             maxOutstandingLoanBalance = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.maxOutstandingBalanceParameterName,
                     element, locale);
             disbursementDetails = this.loanDisbursementDetailsAssembler.fetchDisbursementData(element.getAsJsonObject());
@@ -252,19 +253,19 @@ public class LoanAssembler {
                     syncDisbursementWithMeeting, fixedEmiAmount, disbursementDetails, maxOutstandingLoanBalance,
                     createStandingInstructionAtDisbursement, isFloatingInterestRate, interestRateDifferential, rates,
                     fixedPrincipalPercentagePerInstallment, externalId, loanApplicationTerms, loanScheduleModel,
-                    isEnableInstallmentLevelDelinquency, submittedOnDate);
+                    isEnableInstallmentLevelDelinquency, submittedOnDate, new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio));
         } else if (group != null) {
             loanApplication = Loan.newGroupLoanApplication(accountNo, group, loanAccountType, loanProduct, fund, loanOfficer, loanPurpose,
                     transactionProcessingStrategy, loanProductRelatedDetail, loanCharges, syncDisbursementWithMeeting, fixedEmiAmount,
                     disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
                     interestRateDifferential, rates, fixedPrincipalPercentagePerInstallment, externalId, loanApplicationTerms,
-                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate);
+                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate,new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio));
         } else if (client != null) {
             loanApplication = Loan.newIndividualLoanApplication(accountNo, client, loanAccountType, loanProduct, fund, loanOfficer,
                     loanPurpose, transactionProcessingStrategy, loanProductRelatedDetail, loanCharges, collateral, fixedEmiAmount,
                     disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
                     interestRateDifferential, rates, fixedPrincipalPercentagePerInstallment, externalId, loanApplicationTerms,
-                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate);
+                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate, new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio));
         } else {
             throw new IllegalStateException("No loan application exists for either a client or group (or both).");
         }

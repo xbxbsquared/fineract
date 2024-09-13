@@ -75,7 +75,9 @@ public final class LoanScheduleValidator {
             LoanApiConstants.daysInYearTypeParameterName, LoanApiConstants.fixedPrincipalPercentagePerInstallmentParamName,
             LoanProductConstants.FIXED_LENGTH, LoanProductConstants.ENABLE_INSTALLMENT_LEVEL_DELINQUENCY,
             LoanProductConstants.ENABLE_DOWN_PAYMENT, LoanProductConstants.DISBURSED_AMOUNT_PERCENTAGE_DOWN_PAYMENT,
-            LoanProductConstants.ENABLE_AUTO_REPAYMENT_DOWN_PAYMENT));
+            LoanProductConstants.ENABLE_AUTO_REPAYMENT_DOWN_PAYMENT,
+            LoanApiConstants.GOODS_VALUE,LoanApiConstants.FREIGHT_CHARGES,LoanApiConstants.OTHER_CHARGES,
+            LoanApiConstants.ADVANCE,LoanApiConstants.REDUCTION_BY_LENDER, LoanApiConstants.ADVANCE_RATIO));
 
     private final FromJsonHelper fromApiJsonHelper;
 

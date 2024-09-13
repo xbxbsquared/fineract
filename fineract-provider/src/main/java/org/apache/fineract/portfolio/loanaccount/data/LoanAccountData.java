@@ -268,6 +268,8 @@ public class LoanAccountData {
     private EnumOptionData loanScheduleType;
     private EnumOptionData loanScheduleProcessingType;
 
+    private LoanAdditionalDetails loanAdditionalDetails;
+
     public static LoanAccountData importInstanceIndividual(EnumOptionData loanTypeEnumOption, Long clientId, Long productId,
             Long loanOfficerId, LocalDate submittedOnDate, Long fundId, BigDecimal principal, Integer numberOfRepayments,
             Integer repaymentEvery, EnumOptionData repaidEveryFrequencyEnums, Integer loanTermFrequency,
@@ -452,7 +454,7 @@ public class LoanAccountData {
             LocalDate lastClosedBusinessDate, LocalDate overpaidOnDate, final boolean chargedOff, final boolean enableDownPayment,
             final BigDecimal disbursedAmountPercentageForDownPayment, final boolean enableAutoRepaymentForDownPayment,
             final boolean enableInstallmentLevelDelinquency, final EnumOptionData loanScheduleType,
-            final EnumOptionData loanScheduleProcessingType, final Integer fixedLength) {
+            final EnumOptionData loanScheduleProcessingType, final Integer fixedLength, final LoanAdditionalDetails loanAdditionalDetails) {
 
         final CollectionData delinquent = CollectionData.template();
 
@@ -496,7 +498,7 @@ public class LoanAccountData {
                 .setEnableDownPayment(enableDownPayment).setDisbursedAmountPercentageForDownPayment(disbursedAmountPercentageForDownPayment)
                 .setEnableAutoRepaymentForDownPayment(enableAutoRepaymentForDownPayment)
                 .setEnableInstallmentLevelDelinquency(enableInstallmentLevelDelinquency).setLoanScheduleType(loanScheduleType)
-                .setLoanScheduleProcessingType(loanScheduleProcessingType).setFixedLength(fixedLength);
+                .setLoanScheduleProcessingType(loanScheduleProcessingType).setFixedLength(fixedLength).setLoanAdditionalDetails(loanAdditionalDetails);
     }
 
     /*
