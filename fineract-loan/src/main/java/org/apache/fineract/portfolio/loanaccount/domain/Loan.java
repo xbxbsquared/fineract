@@ -980,6 +980,7 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
                 }
             }
             case INVALID, FLAT -> BigDecimal.ZERO;
+            case PERCENT_OF_NET_INVOICE -> getDerivedAmountForChargeForNetInvoice(loanCharge);
         };
     }
 
@@ -1028,7 +1029,8 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
                 installment.getPrincipal(getCurrency()).plus(installment.getInterestCharged(getCurrency()));
             case PERCENT_OF_INTEREST -> installment.getInterestCharged(getCurrency());
             case PERCENT_OF_DISBURSEMENT_AMOUNT, INVALID, FLAT -> Money.zero(getCurrency());
-
+            //todo:saurabh needs to check this in flow
+            case PERCENT_OF_NET_INVOICE -> null;
         };
         return Money.zero(getCurrency()) //
                 .plus(LoanCharge.percentageOf(percentOf.getAmount(), percentage));
@@ -1603,7 +1605,7 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
                     externalId = ExternalId.generate();
                 }
                 final LoanCharge loanCharge = new LoanCharge(this, chargeDefinition, principal, null, null, null, expectedDisbursementDate,
-                        null, null, BigDecimal.ZERO, externalId);
+                        null, null, BigDecimal.ZERO, externalId, this.getNetInvoice());
                 LoanTrancheDisbursementCharge loanTrancheDisbursementCharge = new LoanTrancheDisbursementCharge(loanCharge,
                         disbursementDetails);
                 loanCharge.updateLoanTrancheDisbursementCharge(loanTrancheDisbursementCharge);
@@ -1770,6 +1772,7 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
             } else {
                 disburseAmount = disburseAmount.plus(principalDisbursed);
             }
+          //todo:Saurabh check the charges and reduce from the disbursement amount if charges has flag to be reduce form principal amount
 
             if (details.isEmpty()) {
                 diff = this.loanRepaymentScheduleDetail.getPrincipal().minus(principalDisbursed).getAmount();
@@ -5110,6 +5113,32 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
         }
         return amount;
     }
+    public BigDecimal getDerivedAmountForChargeForNetInvoice(final LoanCharge loanCharge) {
+        BigDecimal amount = BigDecimal.ZERO;
+        if (isMultiDisburmentLoan() && loanCharge.getCharge().getChargeTimeType().equals(ChargeTimeType.DISBURSEMENT.getValue())) {
+            amount = getNetInvoiceValue();
+        } else {
+            // If charge type is specified due date and loan is multi disburment loan.
+            // Then we need to get as of this loan charge due date how much amount disbursed.
+            if (loanCharge.isSpecifiedDueDate() && this.isMultiDisburmentLoan()) {
+                for (final LoanDisbursementDetails loanDisbursementDetails : this.getDisbursementDetails()) {
+                    if (!DateUtils.isAfter(loanDisbursementDetails.expectedDisbursementDate(), loanCharge.getDueDate())) {
+                        amount = amount.add(loanDisbursementDetails.principal());
+                    }
+                }
+            } else {
+                amount = getNetInvoiceValue();
+            }
+        }
+        return amount;
+    }
+
+    private BigDecimal getNetInvoiceValue() {
+       BigDecimal invoiceValue = this.getLoanAdditionalDetails().getGoodsValue()
+               .add(this.getLoanAdditionalDetails().getFreigtCharges())
+               .add(this.getLoanAdditionalDetails().getFreigtCharges());
+       return invoiceValue.subtract(this.getLoanAdditionalDetails().getAdvance());
+    }
 
     public void updateWriteOffReason(CodeValue writeOffReason) {
         this.writeOffReason = writeOffReason;
@@ -5534,5 +5563,12 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
 
     public void setIsTopup(boolean topup) {
         isTopup = topup;
+    }
+
+    public BigDecimal getNetInvoice() {
+       return this.getLoanAdditionalDetails().getGoodsValue()
+               .add(this.getLoanAdditionalDetails().getFreigtCharges())
+               .add(this.getLoanAdditionalDetails().getOtherCharges())
+                .subtract(this.getLoanAdditionalDetails().getAdvance());
     }
 }

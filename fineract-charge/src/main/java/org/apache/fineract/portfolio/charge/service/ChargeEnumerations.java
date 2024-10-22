@@ -165,6 +165,10 @@ public final class ChargeEnumerations {
                 optionData = new EnumOptionData(ChargeCalculationType.PERCENT_OF_DISBURSEMENT_AMOUNT.getValue().longValue(),
                         ChargeCalculationType.PERCENT_OF_DISBURSEMENT_AMOUNT.getCode(), "% Disbursement Amount");
             break;
+            case PERCENT_OF_NET_INVOICE:
+                optionData = new EnumOptionData(ChargeCalculationType.PERCENT_OF_NET_INVOICE.getValue().longValue(),
+                        ChargeCalculationType.PERCENT_OF_NET_INVOICE.getCode(), "% Net Invoice");
+                break;
             default:
                 optionData = new EnumOptionData(ChargeCalculationType.INVALID.getValue().longValue(),
                         ChargeCalculationType.INVALID.getCode(), "Invalid");

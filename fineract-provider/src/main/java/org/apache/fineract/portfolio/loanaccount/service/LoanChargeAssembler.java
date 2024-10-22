@@ -87,6 +87,13 @@ public class LoanChargeAssembler {
 
         final Set<LoanCharge> loanCharges = new HashSet<>();
         final BigDecimal principal = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("principal", element);
+        final BigDecimal goodsValue = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("goodsValue", element);
+        final BigDecimal freightCharges= this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("freightCharges", element);
+        final BigDecimal otherCharges = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("otherCharges", element);
+        final BigDecimal advance = this.fromApiJsonHelper.extractBigDecimalWithLocaleNamed("advance", element);
+        final BigDecimal netInvoice = goodsValue.add(freightCharges).add(otherCharges).subtract(advance);
+
+
         final Integer numberOfRepayments = this.fromApiJsonHelper.extractIntegerWithLocaleNamed("numberOfRepayments", element);
         final Long productId = this.fromApiJsonHelper.extractLongNamed("productId", element);
         final LoanProduct loanProduct = this.loanProductRepository.findById(productId)
@@ -132,7 +139,7 @@ public class LoanChargeAssembler {
                         }
                         if (!isMultiDisbursal) {
                             final LoanCharge loanCharge = createNewWithoutLoan(chargeDefinition, principal, amount, chargeTime,
-                                    chargeCalculation, dueDate, chargePaymentModeEnum, numberOfRepayments, externalId);
+                                    chargeCalculation, dueDate, chargePaymentModeEnum, numberOfRepayments, externalId, netInvoice);
                             loanCharges.add(loanCharge);
                         } else {
                             if (topLevelJsonElement.has("disbursementData") && topLevelJsonElement.get("disbursementData").isJsonArray()) {
@@ -151,7 +158,7 @@ public class LoanChargeAssembler {
                                     if (chargeDefinition.isPercentageOfApprovedAmount()
                                             && disbursementDetail.expectedDisbursementDateAsLocalDate().equals(expectedDisbursementDate)) {
                                         final LoanCharge loanCharge = createNewWithoutLoan(chargeDefinition, principal, amount, chargeTime,
-                                                chargeCalculation, dueDate, chargePaymentModeEnum, numberOfRepayments, externalId);
+                                                chargeCalculation, dueDate, chargePaymentModeEnum, numberOfRepayments, externalId, netInvoice);
                                         loanCharges.add(loanCharge);
                                         if (loanCharge.isTrancheDisbursementCharge()) {
                                             loanTrancheDisbursementCharge = new LoanTrancheDisbursementCharge(loanCharge,
@@ -163,7 +170,7 @@ public class LoanChargeAssembler {
                                             final LoanCharge loanCharge = createNewWithoutLoan(chargeDefinition,
                                                     disbursementDetail.principal(), amount, chargeTime, chargeCalculation,
                                                     disbursementDetail.expectedDisbursementDateAsLocalDate(), chargePaymentModeEnum,
-                                                    numberOfRepayments, externalId);
+                                                    numberOfRepayments, externalId, netInvoice);
                                             loanCharges.add(loanCharge);
                                             if (loanCharge.isTrancheDisbursementCharge()) {
                                                 loanTrancheDisbursementCharge = new LoanTrancheDisbursementCharge(loanCharge,
@@ -180,7 +187,7 @@ public class LoanChargeAssembler {
                                         final LoanCharge loanCharge = createNewWithoutLoan(chargeDefinition, disbursementDetail.principal(),
                                                 amount, chargeTime, chargeCalculation,
                                                 disbursementDetail.expectedDisbursementDateAsLocalDate(), chargePaymentModeEnum,
-                                                numberOfRepayments, externalId);
+                                                numberOfRepayments, externalId, netInvoice);
                                         loanCharges.add(loanCharge);
                                         loanTrancheDisbursementCharge = new LoanTrancheDisbursementCharge(loanCharge, disbursementDetail);
                                         loanCharge.updateLoanTrancheDisbursementCharge(loanTrancheDisbursementCharge);
@@ -188,7 +195,7 @@ public class LoanChargeAssembler {
                                 }
                             } else {
                                 final LoanCharge loanCharge = createNewWithoutLoan(chargeDefinition, principal, amount, chargeTime,
-                                        chargeCalculation, dueDate, chargePaymentModeEnum, numberOfRepayments, externalId);
+                                        chargeCalculation, dueDate, chargePaymentModeEnum, numberOfRepayments, externalId, netInvoice);
                                 loanCharges.add(loanCharge);
                             }
                         }
@@ -302,7 +309,7 @@ public class LoanChargeAssembler {
 
         ExternalId externalId = externalIdFactory.createFromCommand(command, "externalId");
         return new LoanCharge(loan, chargeDefinition, amountPercentageAppliedTo, amount, chargeTime, chargeCalculation, dueDate,
-                chargePaymentMode, null, loanCharge, externalId);
+                chargePaymentMode, null, loanCharge, externalId, loan.getNetInvoice());
     }
 
     /*
@@ -310,8 +317,8 @@ public class LoanChargeAssembler {
      */
     public LoanCharge createNewWithoutLoan(final Charge chargeDefinition, final BigDecimal loanPrincipal, final BigDecimal amount,
             final ChargeTimeType chargeTime, final ChargeCalculationType chargeCalculation, final LocalDate dueDate,
-            final ChargePaymentMode chargePaymentMode, final Integer numberOfRepayments, final ExternalId externalId) {
+            final ChargePaymentMode chargePaymentMode, final Integer numberOfRepayments, final ExternalId externalId, final BigDecimal netInvoice) {
         return new LoanCharge(null, chargeDefinition, loanPrincipal, amount, chargeTime, chargeCalculation, dueDate, chargePaymentMode,
-                numberOfRepayments, BigDecimal.ZERO, externalId);
+                numberOfRepayments, BigDecimal.ZERO, externalId, netInvoice);
     }
 }

@@ -24,8 +24,11 @@ public enum ChargeCalculationType {
     FLAT(1, "chargeCalculationType.flat"), //
     PERCENT_OF_AMOUNT(2, "chargeCalculationType.percent.of.amount"), //
     PERCENT_OF_AMOUNT_AND_INTEREST(3, "chargeCalculationType.percent.of.amount.and.interest"), //
-    PERCENT_OF_INTEREST(4, "chargeCalculationType.percent.of.interest"), PERCENT_OF_DISBURSEMENT_AMOUNT(5,
-            "chargeCalculationType.percent.of.disbursement.amount");
+    PERCENT_OF_INTEREST(4, "chargeCalculationType.percent.of.interest"),
+    PERCENT_OF_DISBURSEMENT_AMOUNT(5,
+            "chargeCalculationType.percent.of.disbursement.amount"),
+    PERCENT_OF_NET_INVOICE(6,
+            "chargeCalculationType.percent.of.net.invoice");
 
     private final Integer value;
     private final String code;
@@ -46,7 +49,7 @@ public enum ChargeCalculationType {
     public static Object[] validValuesForLoan() {
         return new Integer[] { ChargeCalculationType.FLAT.getValue(), ChargeCalculationType.PERCENT_OF_AMOUNT.getValue(),
                 ChargeCalculationType.PERCENT_OF_AMOUNT_AND_INTEREST.getValue(), ChargeCalculationType.PERCENT_OF_INTEREST.getValue(),
-                ChargeCalculationType.PERCENT_OF_DISBURSEMENT_AMOUNT.getValue() };
+                ChargeCalculationType.PERCENT_OF_DISBURSEMENT_AMOUNT.getValue(),ChargeCalculationType.PERCENT_OF_NET_INVOICE.getValue() };
     }
 
     public static Object[] validValuesForSavings() {
@@ -87,6 +90,9 @@ public enum ChargeCalculationType {
             case 5:
                 chargeCalculationType = PERCENT_OF_DISBURSEMENT_AMOUNT;
             break;
+            case 6:
+                chargeCalculationType = PERCENT_OF_NET_INVOICE;
+                break;
         }
         return chargeCalculationType;
     }
@@ -122,5 +128,9 @@ public enum ChargeCalculationType {
 
     public boolean isPercentageOfDisbursementAmount() {
         return this.value.equals(ChargeCalculationType.PERCENT_OF_DISBURSEMENT_AMOUNT.getValue());
+    }
+
+    public boolean isPercentageOfNetInvoice() {
+        return this.value.equals(ChargeCalculationType.PERCENT_OF_NET_INVOICE.getValue());
     }
 }
