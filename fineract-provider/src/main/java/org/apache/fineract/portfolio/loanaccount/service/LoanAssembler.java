@@ -163,6 +163,11 @@ public class LoanAssembler {
                 element, locale);
         BigDecimal advanceRatio = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.ADVANCE_RATIO,
                 element, locale);
+        BigDecimal factoringFees = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.FACTORING_FEES,element, locale);
+        BigDecimal netinvoiceValue = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.NET_INVOICE_VALUE,element, locale);
+        BigDecimal tenure = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.TENURE,element, locale);
+        BigDecimal interestRate = this.fromApiJsonHelper.extractBigDecimalNamed(LoanApiConstants.INTEREST_RATE,element, locale);
+
 
         final LoanProduct loanProduct = this.loanProductRepository.findById(productId)
                 .orElseThrow(() -> new LoanProductNotFoundException(productId));
@@ -253,19 +258,19 @@ public class LoanAssembler {
                     syncDisbursementWithMeeting, fixedEmiAmount, disbursementDetails, maxOutstandingLoanBalance,
                     createStandingInstructionAtDisbursement, isFloatingInterestRate, interestRateDifferential, rates,
                     fixedPrincipalPercentagePerInstallment, externalId, loanApplicationTerms, loanScheduleModel,
-                    isEnableInstallmentLevelDelinquency, submittedOnDate, new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio));
+                    isEnableInstallmentLevelDelinquency, submittedOnDate, new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio, factoringFees, netinvoiceValue, tenure, interestRate));
         } else if (group != null) {
             loanApplication = Loan.newGroupLoanApplication(accountNo, group, loanAccountType, loanProduct, fund, loanOfficer, loanPurpose,
                     transactionProcessingStrategy, loanProductRelatedDetail, loanCharges, syncDisbursementWithMeeting, fixedEmiAmount,
                     disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
                     interestRateDifferential, rates, fixedPrincipalPercentagePerInstallment, externalId, loanApplicationTerms,
-                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate,new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio));
+                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate,new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio, factoringFees,netinvoiceValue, tenure, interestRate));
         } else if (client != null) {
             loanApplication = Loan.newIndividualLoanApplication(accountNo, client, loanAccountType, loanProduct, fund, loanOfficer,
                     loanPurpose, transactionProcessingStrategy, loanProductRelatedDetail, loanCharges, collateral, fixedEmiAmount,
                     disbursementDetails, maxOutstandingLoanBalance, createStandingInstructionAtDisbursement, isFloatingInterestRate,
                     interestRateDifferential, rates, fixedPrincipalPercentagePerInstallment, externalId, loanApplicationTerms,
-                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate, new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio));
+                    loanScheduleModel, isEnableInstallmentLevelDelinquency, submittedOnDate, new LoanAdditionalDetails(goodsValue,freightCharges,otherCharges,advance,reductionByLender,advanceRatio, factoringFees, netinvoiceValue, tenure, interestRate));
         } else {
             throw new IllegalStateException("No loan application exists for either a client or group (or both).");
         }

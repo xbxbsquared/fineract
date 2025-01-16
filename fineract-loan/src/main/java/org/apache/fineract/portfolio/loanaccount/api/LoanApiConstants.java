@@ -182,6 +182,10 @@ public interface LoanApiConstants {
     String ADVANCE = "advance";
     String REDUCTION_BY_LENDER = "reductionByLender";
     String ADVANCE_RATIO = "advanceRatio";
+    String FACTORING_FEES = "factoringFees";
+    String TENURE = "tenure";
+    String NET_INVOICE_VALUE = "netinvoiceValue";
+    String INTEREST_RATE = "interestRate";
 
     // Loan Summary Transaction Types
     List<Integer> LOAN_SUMMARY_TRANSACTION_TYPES = List.of(LoanTransactionType.CHARGE_ADJUSTMENT.getValue(), //

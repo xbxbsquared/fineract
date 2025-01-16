@@ -688,7 +688,7 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService, Loa
                     + " l.total_recovered_derived as totalRecovered, topuploan.account_no as closureLoanAccountNo, "
                     + " topup.topup_amount as topupAmount, l.last_closed_business_date as lastClosedBusinessDate,l.overpaidon_date as overpaidOnDate, "
                     + " l.is_charged_off as isChargedOff, l.charge_off_reason_cv_id as chargeOffReasonId, codec.code_value as chargeOffReason, l.charged_off_on_date as chargedOffOnDate, l.enable_down_payment as enableDownPayment, l.disbursed_amount_percentage_for_down_payment as disbursedAmountPercentageForDownPayment, l.enable_auto_repayment_for_down_payment as enableAutoRepaymentForDownPayment,"
-                    + " l.goods_value as goodsValue, l.freight_charges as freightCharges, l.other_charges as otherCharges, l.advance as advance, l.reduction_by_lender as reductionByLender, l.advance_ratio as advanceRatio,"
+                    + " l.goods_value as goodsValue, l.freight_charges as freightCharges, l.other_charges as otherCharges, l.advance as advance, l.reduction_by_lender as reductionByLender, l.advance_ratio as advanceRatio, l.factoring_fees as factoringFees, l.net_invoice_value as netinvoiceValue, l.tenure as tenure, l.interest_rate as interestRate,"
                     + " cobu.username as chargedOffByUsername, cobu.firstname as chargedOffByFirstname, cobu.lastname as chargedOffByLastname, l.loan_schedule_type as loanScheduleType, l.loan_schedule_processing_type as loanScheduleProcessingType "
                     + " from m_loan l" //
                     + " join m_product_loan lp on lp.id = l.product_id" //
@@ -1059,6 +1059,10 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService, Loa
             final BigDecimal advance = rs.getBigDecimal("advance");
             final BigDecimal reductionByLender = rs.getBigDecimal("reductionByLender");
             final BigDecimal advanceRatio = rs.getBigDecimal("advanceRatio");
+            final BigDecimal factoringFees = rs.getBigDecimal("factoringFees");
+            final BigDecimal netinvoiceValue = rs.getBigDecimal("netinvoiceValue");
+            final BigDecimal tenure = rs.getBigDecimal("tenure");
+            final BigDecimal interestRate = rs.getBigDecimal("interestRate");
             final LoanAdditionalDetails loanAdditionalDetails = LoanAdditionalDetails.builder()
                     .goodsValue(goodsValue)
                     .freightCharges(freightCharges)
@@ -1066,6 +1070,10 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService, Loa
                     .advance(advance)
                     .reductionByLender(reductionByLender)
                     .advanceRatio(advanceRatio)
+                    .factoringFees(factoringFees)
+                    .netinvoiceValue(netinvoiceValue)
+                    .tenure(tenure)
+                    .interestRate(interestRate)
                     .build();
 
             return LoanAccountData.basicLoanDetails(id, accountNo, status, externalId, clientId, clientAccountNo, clientName,

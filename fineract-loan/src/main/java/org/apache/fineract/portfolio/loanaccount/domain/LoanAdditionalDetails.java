@@ -27,6 +27,18 @@ public class LoanAdditionalDetails {
     @Column(name = "advance_ratio", scale = 6, precision = 19)
     private BigDecimal advanceRatio;
 
+    @Column(name = "factoring_fees", scale = 6, precision = 19)
+    private BigDecimal factoringFees;
+
+    @Column(name = "net_invoice_value", scale = 6, precision = 19)
+    private BigDecimal netinvoiceValue;
+
+    @Column(name = "tenure", scale = 6, precision = 19)
+    private BigDecimal tenure;
+
+    @Column(name = "interest_rate", scale = 6, precision = 19)
+    private BigDecimal interestRate;
+
     protected LoanAdditionalDetails() {
         //
     }
@@ -36,13 +48,21 @@ public class LoanAdditionalDetails {
                                  final BigDecimal otherCharges,
                                  final BigDecimal advance,
                                  final BigDecimal reductionByLender,
-                                 final BigDecimal advanceRatio ) {
+                                 final BigDecimal advanceRatio,
+                                 final BigDecimal factoringFees,
+                                 final BigDecimal netinvoiceValue,
+                                 final BigDecimal tenure,
+                                 final BigDecimal interestRate) {
         this.goodsValue = goodsValue;
         this.freigtCharges = freigtCharges;
         this.otherCharges = otherCharges;
         this.advance = advance;
         this.reductionByLender = reductionByLender;
         this.advanceRatio = advanceRatio;
+        this.factoringFees = factoringFees;
+        this.netinvoiceValue = netinvoiceValue;
+        this.tenure = tenure;
+        this.interestRate = interestRate;
     }
 
 }

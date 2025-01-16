@@ -185,6 +185,8 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
     @Column(name = "external_id")
     private ExternalId externalId;
 
+
+
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
@@ -234,6 +236,7 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
 
     @Embedded
     private LoanProductRelatedDetail loanRepaymentScheduleDetail;
+
 
     @Column(name = "term_frequency", nullable = false)
     private Integer termFrequency;
@@ -527,6 +530,7 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
 
         this.isFloatingInterestRate = isFloatingInterestRate;
         this.interestRateDifferential = interestRateDifferential;
+        this.loanAdditionalDetails = loanAddtionalDetail;
 
         if (StringUtils.isBlank(accountNo)) {
             this.accountNumber = new RandomPasswordGenerator(19).generate();
@@ -612,7 +616,7 @@ public class Loan extends AbstractAuditableWithUTCDateTimeCustom<Long> {
         this.enableInstallmentLevelDelinquency = enableInstallmentLevelDelinquency;
         this.getLoanProductRelatedDetail()
                 .setEnableAccrualActivityPosting(loanProduct.getLoanProductRelatedDetail().isEnableAccrualActivityPosting());
-        this.loanAdditionalDetails = loanAddtionalDetail;
+
     }
 
     public Integer getNumberOfRepayments() {

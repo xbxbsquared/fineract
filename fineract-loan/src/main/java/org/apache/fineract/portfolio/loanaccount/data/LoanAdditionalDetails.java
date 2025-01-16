@@ -37,4 +37,8 @@ public class LoanAdditionalDetails {
     private final BigDecimal advance;
     private final BigDecimal reductionByLender;
     private  final BigDecimal advanceRatio;
+    private final BigDecimal factoringFees;
+    private final BigDecimal netinvoiceValue;
+    private final BigDecimal tenure;
+    private final BigDecimal interestRate;
 }
