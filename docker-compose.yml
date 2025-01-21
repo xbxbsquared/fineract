@@ -6,11 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile  # Use the same Dockerfile for all services
     container_name: db-init
-    working_dir: /app/fineract
+    working_dir: /fineract
     entrypoint: >
       bash -c "
       echo 'Creating databases...';
-      cd /app/fineract;
+      cd /fineract;
       ./gradlew createDB -PdbName=fineract_tenants;
       ./gradlew createDB -PdbName=fineract_default;
       echo 'Databases created successfully.';"
@@ -26,11 +26,11 @@ services:
       context: .
       dockerfile: Dockerfile  # Use the same Dockerfile for all services
     container_name: fineract-backend
-    working_dir: /app/fineract
+    working_dir: /fineract
     entrypoint: >
       bash -c "
       echo 'Starting backend...';
-      cd /app/fineract;
+      cd /fineract;
       ./gradlew bootRun;"
     environment:
       FINERACT_DB_URL: jdbc:postgresql://ffdashboard.cn6yom60ugil.ap-south-1.rds.amazonaws.com:5432/
