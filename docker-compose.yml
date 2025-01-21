@@ -1,40 +1,42 @@
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements. See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership. The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License. You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-
 version: "3.8"
 
 services:
-
   db:
-    extends:
-      file: ./config/docker/compose/mariadb.yml
-      service: mariadb
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: fineract_tenants
+      MYSQL_USER: root
+      MYSQL_PASSWORD: mysql
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - fineract-network
+    command:
+      - --init-command="CREATE DATABASE IF NOT EXISTS fineract_default;"
 
   fineract:
-    extends:
-      file: ./config/docker/compose/fineract.yml
-      service: fineract
+    build: .
     ports:
-      - "8443:8443"
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/fineract_tenants?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=mysql
+      - FINERACT_HIKARI_JDBC_URL=jdbc:mariadb://db:3306/fineract_tenants?allowPublicKeyRetrieval=true&useSSL=false
+      - FINERACT_HIKARI_USERNAME=root
+      - FINERACT_HIKARI_PASSWORD=mysql
+      - FINERACT_HIKARI_DEFAULT_JDBC_URL=jdbc:mariadb://db:3306/fineract_default?allowPublicKeyRetrieval=true&useSSL=false
+      - FINERACT_HIKARI_DEFAULT_USERNAME=root
+      - FINERACT_HIKARI_DEFAULT_PASSWORD=mysql
     depends_on:
-      db:
-        condition: service_healthy
-    env_file:
-      - ./config/docker/env/fineract.env
-      - ./config/docker/env/fineract-common.env
-      - ./config/docker/env/fineract-mariadb.env
+      - db
+    networks:
+      - fineract-network
+
+networks:
+  fineract-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
