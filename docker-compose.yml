@@ -2,19 +2,18 @@ version: "3.8"
 
 services:
   db-init:
-    image: openjdk:17-jdk-slim
+    build:
+      context: .
+      dockerfile: Dockerfile  # Use the same Dockerfile for all services
     container_name: db-init
     working_dir: /app/fineract
     entrypoint: >
       bash -c "
-      echo 'Cloning repository...';
-      git clone --branch CBX-24 https://github.com/xbxbsquared/fineract.git /app/fineract;
-      cd /app/fineract;
       echo 'Creating databases...';
+      cd /app/fineract;
       ./gradlew createDB -PdbName=fineract_tenants;
       ./gradlew createDB -PdbName=fineract_default;
-      echo 'Databases created successfully.';
-      "
+      echo 'Databases created successfully.';"
     environment:
       FINERACT_DB_URL: jdbc:postgresql://ffdashboard.cn6yom60ugil.ap-south-1.rds.amazonaws.com:5432/
       FINERACT_DB_USERNAME: postgres
@@ -23,17 +22,16 @@ services:
       - fineract-network
 
   backend:
-    image: openjdk:17-jdk-slim
+    build:
+      context: .
+      dockerfile: Dockerfile  # Use the same Dockerfile for all services
     container_name: fineract-backend
     working_dir: /app/fineract
     entrypoint: >
       bash -c "
-      echo 'Cloning repository...';
-      git clone https://github.com/apache/fineract.git /app/fineract;
-      cd /app/fineract;
       echo 'Starting backend...';
-      ./gradlew bootRun;
-      "
+      cd /app/fineract;
+      ./gradlew bootRun;"
     environment:
       FINERACT_DB_URL: jdbc:postgresql://ffdashboard.cn6yom60ugil.ap-south-1.rds.amazonaws.com:5432/
       FINERACT_DB_USERNAME: postgres
