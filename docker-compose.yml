@@ -10,6 +10,7 @@ services:
     entrypoint: >
       bash -c "
       echo 'Creating databases...';
+      chmod +x ./gradlew;  # Ensure gradlew is executable
       ./gradlew createDB -PdbName=fineract_tenants;
       ./gradlew createDB -PdbName=fineract_default;
       echo 'Databases created successfully.';"
@@ -29,7 +30,8 @@ services:
     entrypoint: >
       bash -c "
       echo 'Starting backend...';
-      ./gradlew bootRun;"
+      chmod +x ./gradlew;  # Ensure gradlew is executable
+      ./gradlew bootRun; # Start the backend service"
     environment:
       FINERACT_DB_URL: jdbc:postgresql://ffdashboard.cn6yom60ugil.ap-south-1.rds.amazonaws.com:5432/
       FINERACT_DB_USERNAME: postgres
