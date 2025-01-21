@@ -5,8 +5,8 @@ FROM openjdk:17-jdk-slim
 RUN apt-get update && apt-get install -y \
     git \
     gradle \
-    mariadb-client && \  # Use mariadb-client instead of mysql-client
-    rm -rf /var/lib/apt/lists/*
+    mariadb-client && \
+    rm -rf /var/lib/apt/lists/*  # Ensure no space or characters after the backslash
 
 # Set default working directory
 WORKDIR /fineract
