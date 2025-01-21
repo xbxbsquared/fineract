@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 RUN apt-get update && apt-get install -y \
     git \
     gradle \
-    mysql-client && \
+    mariadb-client && \  # Use mariadb-client instead of mysql-client
     rm -rf /var/lib/apt/lists/*
 
 # Set default working directory
