@@ -10,7 +10,6 @@ services:
     entrypoint: >
       bash -c "
       echo 'Creating databases...';
-      cd /fineract;
       ./gradlew createDB -PdbName=fineract_tenants;
       ./gradlew createDB -PdbName=fineract_default;
       echo 'Databases created successfully.';"
@@ -30,7 +29,6 @@ services:
     entrypoint: >
       bash -c "
       echo 'Starting backend...';
-      cd /fineract;
       ./gradlew bootRun;"
     environment:
       FINERACT_DB_URL: jdbc:postgresql://ffdashboard.cn6yom60ugil.ap-south-1.rds.amazonaws.com:5432/
