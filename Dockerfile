@@ -5,6 +5,7 @@ FROM openjdk:17-jdk-slim
 RUN apt-get update && apt-get install -y \
     git \
     gradle \
+    mysql-client \   # Installing MySQL client
     && rm -rf /var/lib/apt/lists/*
 
 # Set default working directory

@@ -11,15 +11,15 @@ services:
       bash -c "
       echo 'Creating databases...';
       chmod +x ./gradlew;  # Ensure gradlew is executable
-      ./gradlew createDB -PdbName=fineract_tenants;
-      ./gradlew createDB -PdbName=fineract_default;
+      mysql -h mysqlcontainer-mysql -u root -pmysql -e 'CREATE DATABASE IF NOT EXISTS fineract_tenants;';
+      mysql -h mysqlcontainer-mysql -u root -pmysql -e 'CREATE DATABASE IF NOT EXISTS fineract_default;';
       echo 'Databases created successfully.';"
     environment:
-      FINERACT_DB_URL: jdbc:postgresql://ffdashboard.cn6yom60ugil.ap-south-1.rds.amazonaws.com:5432/
-      FINERACT_DB_USERNAME: postgres
-      FINERACT_DB_PASSWORD: mguqAKTTOFbDYpplilek
+      MYSQL_ROOT_PASSWORD: mysql  # Password for the MySQL root user
     networks:
       - fineract-network
+    depends_on:
+      - mysqlcontainer-mysql
 
   backend:
     build:
@@ -33,14 +33,32 @@ services:
       chmod +x ./gradlew;  # Ensure gradlew is executable
       ./gradlew bootRun; # Start the backend service"
     environment:
-      FINERACT_DB_URL: jdbc:postgresql://ffdashboard.cn6yom60ugil.ap-south-1.rds.amazonaws.com:5432/
-      FINERACT_DB_USERNAME: postgres
-      FINERACT_DB_PASSWORD: mguqAKTTOFbDYpplilek
+      FINERACT_DB_URL: jdbc:mysql://mysqlcontainer-mysql:3306/
+      FINERACT_DB_USERNAME: root
+      FINERACT_DB_PASSWORD: mysql
     ports:
       - "8080:8080"
     networks:
       - fineract-network
+    depends_on:
+      - mysqlcontainer-mysql
+
+  mysqlcontainer-mysql:
+    image: mysql:latest
+    container_name: mysqlcontainer-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - fineract-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: always
 
 networks:
   fineract-network:
     driver: bridge
+
+volumes:
+  mysql-data:
