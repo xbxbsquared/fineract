@@ -18,4 +18,5 @@ COPY . .
 RUN chmod +x /fineract/gradlew
 
 # Set the command to run the application
-CMD ["./gradlew", "bootRun"]
+CMD ["./gradlew", "bootRun", "--stacktrace"]
+
