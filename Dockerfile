@@ -16,3 +16,6 @@ COPY . .
 
 # Ensure gradlew has execute permissions
 RUN chmod +x /fineract/gradlew
+
+# Set the command to run the application
+CMD ["./gradlew", "bootRun"]
