@@ -8,4 +8,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set default working directory
-WORKDIR /app/fineract
+WORKDIR /fineract
+
+# Copy the entire project into the container
+COPY . .
+
+# Ensure gradlew has execute permissions
+RUN chmod +x /fineract/gradlew
